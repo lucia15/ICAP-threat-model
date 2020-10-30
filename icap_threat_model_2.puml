@@ -1,0 +1,71 @@
+@startuml kubernetes
+
+skinparam defaultTextAlignment center
+
+!define ICONURL https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/v2.2.0
+!define AzurePuml https://raw.githubusercontent.com/RicardoNiepel/Azure-PlantUML/release/2-1/dist
+!define KubernetesPuml https://raw.githubusercontent.com/dcasati/kubernetes-PlantUML/master/dist
+
+!include  <C4/C4_Context.puml>
+!include <office/Users/user.puml>
+!includeurl ICONURL/common.puml
+!includeurl ICONURL/font-awesome-5/cloud.puml
+!includeurl ICONURL/font-awesome-5/docker.puml
+!includeurl ICONURL/font-awesome-5/server.puml
+!includeurl ICONURL/font-awesome-5/database.puml
+!includeurl AzurePuml/AzureCommon.puml
+!includeurl AzurePuml/AzureSimplified.puml
+!includeurl KubernetesPuml/kubernetes_Context.puml
+!includeurl KubernetesPuml/kubernetes_Simplified.puml
+!includeurl KubernetesPuml/OSS/KubernetesSvc.puml
+!includeurl KubernetesPuml/OSS/KubernetesPod.puml
+!includeurl KubernetesPuml/OSS/KubernetesApi.puml
+!includeurl KubernetesPuml/OSS/KubernetesNode.puml
+
+
+LAYOUT_WITH_LEGEND()
+
+
+System(file_policy,                     "\nUnmanaged\nFile Policy")
+System(mgt_policy,                      "\nContent Management \nPolicy")
+System(blocked_policy,                  "\nBlocked File \nPolicy")
+KubernetesApi(kube,                     "\nKubernetes", "")
+FA5_SERVER(response_queue,              "\nResponse \nQueue") #Orange
+FA5_DOCKER(file_service,                "\nNon Conformant \nFile Service")#Green
+
+
+
+Boundary(request_pod,                   "Request Processing Pod"){
+  FA5_DOCKER(rebuild_app,                Rebuild App) #Blue
+
+    Boundary(sdk,                       "SDK"){
+      KubernetesPod(gw_config,          "\nGWFileConfig \nXML", "")
+      System(parsed_policy,             "\nParsed\nCM Policy")
+      KubernetesPod(gw_protect,         "\nGWFileToFile \nProtect", "")
+      KubernetesPod(gw_file_type,       "\nGWDetermine \nFileTypeFromFile", "")
+
+}
+
+}
+
+FA5_DATABASE(original_store,            "\nOriginal Data \nStore") #Yellow
+FA5_DATABASE(rebuilt_store,             "\nRebuilt Data \nStore") #Yellow
+
+file_policy                  -down->    rebuild_app     :Read
+mgt_policy                   -down->    rebuild_app     :Read
+blocked_policy               -down->    rebuild_app     :Read
+kube                         ->         rebuild_app     :IO & Config Paths
+rebuild_app                  -down->    response_queue  :Adaptation Response
+rebuild_app                  ->         gw_config       :CM Policy XML Content
+gw_config                    ->         parsed_policy   :Write
+parsed_policy                ->         gw_protect      :Read
+rebuild_app                  <-down->   gw_file_type    :File Path
+rebuild_app                  <-down->   gw_protect      :IO Paths & File Type
+original_store               -up->      gw_protect      :Read
+gw_protect                   -down->    rebuilt_store   :Write
+original_store               -up->      gw_file_type    :Read
+file_service                 <-down->   rebuild_app     :Response/File Content
+rebuild_app                  ->         rebuilt_store   :Write Error Message
+
+
+@enduml
