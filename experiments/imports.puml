@@ -1,4 +1,4 @@
-@startuml kubernetes
+@startuml
 
 skinparam defaultTextAlignment center
 
