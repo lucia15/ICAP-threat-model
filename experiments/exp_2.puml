@@ -23,9 +23,6 @@ skinparam defaultTextAlignment center
 !includeurl KubernetesPuml/OSS/KubernetesNode.puml
 
 
-LAYOUT_WITH_LEGEND()
-
-
 System(file_policy,                     "\nUnmanaged\nFile Policy")
 System(mgt_policy,                      "\nContent Management \nPolicy")
 System(blocked_policy,                  "\nBlocked File \nPolicy")

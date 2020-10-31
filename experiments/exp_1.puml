@@ -1,0 +1,89 @@
+@startuml
+
+skinparam defaultTextAlignment center
+
+!include  <C4/C4_Context.puml>
+!include <office/Users/user.puml>
+!define ICONURL https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/v2.2.0
+!includeurl ICONURL/common.puml
+!includeurl ICONURL/font-awesome-5/cloud.puml
+!includeurl ICONURL/font-awesome-5/user.puml
+!includeurl ICONURL/font-awesome-5/server.puml
+!includeurl ICONURL/font-awesome-5/database.puml
+!includeurl ICONURL/font-awesome-5/circle.puml
+!includeurl ICONURL/font-awesome-5/file_alt.puml
+!includeurl ICONURL/font-awesome-5/user_cog.puml
+
+
+Boundary(internet,                          "Internet"){
+  FA5_CLOUD(cloud,                           Cloud Storage) #LightBlue
+}
+
+Boundary(trust,                             "Trust Boundary"){
+  System(surrogate,                         "Surrogate", "(ICAP Client)")
+    cloud                 <-->               surrogate
+}
+
+Boundary(users,                             "Users Machine"){
+  FA5_USER(user,                             User) #Purple
+    surrogate             <-->               user
+}
+
+
+Boundary(cloud_platform,                    "Cloud Platform"){
+  FA5_SERVER(icap_server,                   ICAP Server) #Orange
+    surrogate             <->               icap_server
+
+      Boundary(trust_t,                     "Trust Boundary"){
+
+        System(icap_resource,               "GW ICAP Resource")
+        FA5_DATABASE(content_store,          Content Store) #Green
+        System_Ext(transaction_outcome,     "Transaction Outcome")
+        FA5_CIRCLE(update_rebuilt,           Update Rebuilt Transactions) #White
+        FA5_CIRCLE(check_outcome,            Check Available Outcome) #White
+        FA5_CIRCLE(compute_hash,             Compute Hash) #White
+        FA5_DATABASE(transaction_store,      Transaction Store) #Yellow
+        FA5_DATABASE(file_store,             File Store) #Yellow
+        FA5_FILE_ALT(check_file,             Check File Type) #Brown
+        FA5_FILE_ALT(analyse_file,           Analyse File) #Brown
+        FA5_FILE_ALT(rebuild_file,           Rebuild File) #Brown
+        FA5_DATABASE(file_analysis_store,    File Analysis Store) #Green
+        FA5_DATABASE(rebuild_store,          Rebuild Store) #Green
+        FA5_USER_COG(admin_console,          Administrator Console) #RoyalBlue
+        FA5_CIRCLE(auditing,                 Auditing) #Pink
+        FA5_DATABASE(audit_store,            Audit Store) #Pink
+
+
+        icap_server               ->        icap_resource
+        icap_resource 	          -up->     content_store
+        transaction_outcome 	    -up->     icap_resource
+        update_rebuilt            -up->     transaction_store
+        content_store             ->        compute_hash
+        compute_hash              ->        transaction_store
+        transaction_store         ->        check_outcome
+        check_outcome             ->        file_store
+        file_store                <-up->    check_file
+        file_store                ->        analyse_file
+        file_store                -down->   rebuild_file
+        analyse_file              ->        file_analysis_store
+        rebuild_file              ->        rebuild_store
+        rebuild_store             -up->     file_store
+        file_analysis_store       -down->   admin_console
+        file_store                -down->   update_rebuilt
+        update_rebuilt            -down->   transaction_outcome
+        auditing                  -up->     admin_console
+        audit_store               <->       auditing
+  }
+
+}
+
+
+Boundary(trust_n,                          "Trust Boundary"){
+  FA5_USER_COG(admin,                       Administrator) #White
+  FA5_CIRCLE(siem,                          SIEM) #White
+    auditing                     <-down->   siem
+    admin                        <->        admin_console
+}
+
+
+@enduml

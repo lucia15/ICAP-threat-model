@@ -1,7 +1,9 @@
 # ICAP-threat-model
 
-### Model 1
-![icap_threat_model](https://user-images.githubusercontent.com/8102313/97500601-ee552d80-1980-11eb-9d87-9a8e6069ea01.png)
+### Experiment 1
+![ex1](https://user-images.githubusercontent.com/8102313/97790535-5eaabb80-1bda-11eb-908c-8ae7a6edafeb.png)
 
-### Model 2
-![icap_threat_model_2](https://user-images.githubusercontent.com/8102313/97631255-b9f57600-1a41-11eb-813a-1df99e7c9e39.png)
+
+### Experiment 2
+![ex2](https://user-images.githubusercontent.com/8102313/97790551-81d56b00-1bda-11eb-804b-4e5718da3962.png)
+
