@@ -2,7 +2,8 @@
 
 ### Threat Model
 
-![icap_threat_model](https://user-images.githubusercontent.com/8102313/97815285-fa513000-1c9d-11eb-89f7-a1dd95881968.png)
+![threat_model_v2](https://user-images.githubusercontent.com/8102313/99427464-81e1a480-2916-11eb-8f4b-2ec501c07d66.png)
+
 
 
 ### Experiment 1
